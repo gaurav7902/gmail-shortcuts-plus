@@ -2,6 +2,7 @@
   'use strict';
 
   const STORAGE_KEY = 'gmailArrowNavigationEnabled';
+  const extensionApi = typeof browser !== 'undefined' ? browser : (typeof chrome !== 'undefined' ? chrome : null);
 
   let isNavigationEnabled = true;
 
@@ -23,16 +24,30 @@
   };
 
   function getStorageApi() {
-    return chrome && chrome.storage && chrome.storage.local ? chrome.storage.local : null;
+    return extensionApi && extensionApi.storage && extensionApi.storage.local
+      ? extensionApi.storage.local
+      : null;
+  }
+
+  function getRuntimeApi() {
+    return extensionApi && extensionApi.runtime ? extensionApi.runtime : null;
   }
 
   function loadNavigationEnabledState() {
     const storage = getStorageApi();
     if (!storage) return Promise.resolve(true);
 
+    if (typeof storage.get === 'function' && storage.get.length <= 1) {
+      return storage.get(STORAGE_KEY).then((result) => {
+        const storedValue = result[STORAGE_KEY];
+        return typeof storedValue === 'boolean' ? storedValue : true;
+      });
+    }
+
     return new Promise((resolve) => {
       storage.get([STORAGE_KEY], (result) => {
-        if (chrome.runtime && chrome.runtime.lastError) {
+        const runtime = getRuntimeApi();
+        if (runtime && runtime.lastError) {
           resolve(true);
           return;
         }
@@ -46,6 +61,13 @@
   function saveNavigationEnabledState(enabled) {
     const storage = getStorageApi();
     if (!storage) return;
+
+    if (typeof storage.set === 'function' && storage.set.length <= 1) {
+      storage.set({ [STORAGE_KEY]: enabled }).catch(function () {
+        // Ignore runtime errors silently and keep session state in memory.
+      });
+      return;
+    }
 
     storage.set({ [STORAGE_KEY]: enabled }, function () {
       // Ignore runtime errors silently and keep session state in memory.
@@ -115,7 +137,8 @@
   });
 
   // Keep state in sync when popup toggles the feature.
-  chrome.storage.onChanged.addListener(function (changes, areaName) {
+  if (extensionApi && extensionApi.storage && extensionApi.storage.onChanged) {
+    extensionApi.storage.onChanged.addListener(function (changes, areaName) {
     if (areaName !== 'local' || !Object.prototype.hasOwnProperty.call(changes, STORAGE_KEY)) {
       return;
     }
@@ -124,6 +147,7 @@
     if (typeof nextValue === 'boolean') {
       isNavigationEnabled = nextValue;
     }
-  });
+    });
+  }
 })();
 
