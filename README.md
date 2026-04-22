@@ -11,11 +11,7 @@ A lightweight browser extension that enhances Gmail navigation with arrow keys.
 ## Installation
 
 ### Firefox
-
-1. Open Firefox and navigate to `about:debugging#/runtime/this-firefox`
-2. Click "Load Temporary Add-on"
-3. Select `manifest.json` from this project folder
-
+#### Extension is available => https://addons.mozilla.org/en-US/firefox/addon/gmail-arrow-keys-navigator/
 ### Chromium (Chrome/Edge/Brave)
 
 1. Clone this repository
