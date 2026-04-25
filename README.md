@@ -25,3 +25,11 @@ A lightweight browser extension that enhances Gmail navigation with arrow keys.
 ## Contributing
 
 Contributions are welcome! Feel free to fork, improve, and submit pull requests.
+
+## Future Enhancements
+
+- [ ] **Customizable Keybindings**: Allow users to map navigation to different keys.
+- [ ] **Expanded Navigation**: Add support for `Up`/`Down` arrows to move through the email list without leaving the current thread.
+- [ ] **Visual Feedback**: Implement subtle highlights or animations to indicate the transition between emails.
+- [ ] **Advanced Gmail View Support**: Optimize navigation for split-pane and conversation layouts.
+- [ ] **Quick-Action Shortcuts**: Add shortcuts for marking emails as read/unread or archiving using keyboard combinations.
