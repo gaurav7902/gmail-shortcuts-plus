@@ -1,18 +1,25 @@
 #!/bin/bash
 
-# Name of the output zip file
-OUTPUT="gmail-helper-extension.zip"
+OUTPUT="gmail-shortcuts-plus-extension.zip"
 
-# List of files to include in the zip
+# Ensure extension folder exists
+if [[ ! -d "extension" ]]; then
+    echo "Error: extension folder not found."
+    exit 1
+fi
+
+cd extension || exit 1
+
+# Check required files
 FILES=(
-    "extension/content.js"
-    "extension/icon.png"
-    "extension/manifest.json"
-    "extension/popup.html"
-    "extension/popup.js"
+    "content.js"
+    "icon48.png"
+    "icon128.png"
+    "manifest.json"
+    "popup.html"
+    "popup.js"
 )
 
-# Check if files exist
 for file in "${FILES[@]}"; do
     if [[ ! -f "$file" ]]; then
         echo "Error: $file does not exist."
@@ -20,7 +27,10 @@ for file in "${FILES[@]}"; do
     fi
 done
 
-# Create the zip
-zip -r "$OUTPUT" "${FILES[@]}"
+# Remove old zip if exists
+rm -f "../$OUTPUT"
 
-echo "Created $OUTPUT successfully!"
+# Create zip with direct files (no folder)
+zip -r "../$OUTPUT" "${FILES[@]}"
+
+echo "Created $OUTPUT with direct files!"

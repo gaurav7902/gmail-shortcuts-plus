@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gmail Arrow Key Navigation</title>
+    <title>Gmail Shortcuts Plus</title>
     <style>
       :root {
         color-scheme: light;
@@ -11,65 +11,169 @@
 
       body {
         margin: 0;
-        min-width: 280px;
+        min-width: 320px;
         font-family: "Google Sans", Roboto, Arial, sans-serif;
-        background: #f8f9fa;
+        background: #f5f7fb;
         color: #202124;
       }
 
       .panel {
-        margin: 12px;
-        padding: 14px;
-        border: 1px solid #dadce0;
-        border-radius: 12px;
+        margin: 0;
+        padding: 16px;
+        border: 1px solid #e3e7ee;
+        border-radius: 8px;
         background: #ffffff;
-        box-shadow: 0 2px 8px rgba(60, 64, 67, 0.15);
+        box-shadow: 0 8px 24px rgba(60, 64, 67, 0.12);
+      }
+
+      .header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 14px;
       }
 
       h1 {
-        margin: 0 0 10px;
-        font-size: 16px;
+        margin: 0;
+        font-size: 15px;
         line-height: 1.3;
+        letter-spacing: 0;
       }
 
       #status {
-        margin: 0 0 12px;
-        font-size: 13px;
-        color: #5f6368;
+        flex: 0 0 auto;
+        margin: 0;
+        border: 1px solid #d7e4ff;
+        border-radius: 999px;
+        padding: 4px 8px;
+        font-size: 11px;
+        font-weight: 700;
+        line-height: 1.2;
+        color: #174ea6;
+        background: #eef4ff;
       }
 
-      #toggle {
+      #status[data-state="inactive"] {
+        border-color: #ead9dd;
+        color: #8c1d18;
+        background: #fff3f1;
+      }
+
+      #toggle,
+      .key-button,
+      #reset-keybindings {
         width: 100%;
-        border: 1px solid #dadce0;
+        box-sizing: border-box;
+        border: 1px solid #d7dde8;
         border-radius: 8px;
-        padding: 9px 10px;
+        padding: 10px 12px;
         font-size: 13px;
         font-weight: 600;
-        background: #f1f3f4;
+        font-family: inherit;
+        background: #f6f8fb;
         color: #202124;
         cursor: pointer;
+        transition:
+          background-color 120ms ease,
+          border-color 120ms ease,
+          color 120ms ease;
       }
 
-      #toggle:focus-visible {
+      #toggle:focus-visible,
+      .key-button:focus-visible,
+      #reset-keybindings:focus-visible {
         outline: 2px solid #1a73e8;
         outline-offset: 1px;
       }
 
-      #toggle:hover {
-        background: #e8eaed;
+      #toggle:hover,
+      .key-button:hover,
+      #reset-keybindings:hover {
+        border-color: #c8d1df;
+        background: #eef3fa;
       }
 
-      #toggle:active {
-        background: #dadce0;
+      #toggle:active,
+      .key-button:active,
+      #reset-keybindings:active {
+        background: #e8edf5;
+      }
+
+      #toggle[aria-pressed="true"] {
+        border-color: #1a73e8;
+        background: #1a73e8;
+        color: #ffffff;
+      }
+
+      .settings {
+        margin-top: 16px;
+        padding-top: 14px;
+        border-top: 1px solid #e5e8ef;
+      }
+
+      .settings-title {
+        margin: 0 0 12px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #3c4043;
+      }
+
+      .keybinding-row {
+        display: grid;
+        grid-template-columns: 94px 1fr;
+        gap: 10px;
+        align-items: center;
+        margin-top: 10px;
+      }
+
+      .keybinding-row label {
+        font-size: 12px;
+        line-height: 1.3;
+        color: #5f6368;
+      }
+
+      .key-button {
+        min-height: 36px;
+        text-align: center;
+        color: #174ea6;
+        background: #f8fbff;
+      }
+
+      .key-button.is-listening {
+        border-color: #1a73e8;
+        background: #e8f0fe;
+        color: #174ea6;
+      }
+
+      #keybinding-message {
+        min-height: 16px;
+        margin: 10px 0 0;
+        font-size: 12px;
+        color: #5f6368;
+      }
+
+      #keybinding-message[data-tone="error"] {
+        color: #b3261e;
+      }
+
+      #reset-keybindings {
+        margin-top: 10px;
+        background: #ffffff;
+        color: #3c4043;
       }
 
       .footer {
         margin-top: 16px;
         padding-top: 12px;
-        border-top: 1px solid #dadce0;
+        border-top: 1px solid #e5e8ef;
         font-size: 12px;
         text-align: center;
         color: #80868b;
+      }
+
+      .footer p {
+        margin: 0;
       }
 
       .footer a {
@@ -85,9 +189,24 @@
   </head>
   <body>
     <main class="panel">
-      <h1>Gmail Arrow Key Navigation</h1>
-      <p id="status" aria-live="polite">Status: ...</p>
+      <div class="header">
+        <h1>Gmail Shortcuts Plus</h1>
+        <p id="status" aria-live="polite">...</p>
+      </div>
       <button id="toggle" type="button" aria-pressed="false">Toggle</button>
+      <section class="settings" aria-labelledby="keybindings-title">
+        <h2 id="keybindings-title" class="settings-title">Keybindings</h2>
+        <div class="keybinding-row">
+          <label for="newer-key">Previous email</label>
+          <button id="newer-key" class="key-button" type="button" data-action="newer"></button>
+        </div>
+        <div class="keybinding-row">
+          <label for="older-key">Next email</label>
+          <button id="older-key" class="key-button" type="button" data-action="older"></button>
+        </div>
+        <p id="keybinding-message" aria-live="polite"></p>
+        <button id="reset-keybindings" type="button">Reset keybindings</button>
+      </section>
       <footer class="footer">
         <p><a href="https://github.com/gaurav7902/gmail-helper" target="_blank" rel="noopener noreferrer">Help or Contribute</a></p>
       </footer>

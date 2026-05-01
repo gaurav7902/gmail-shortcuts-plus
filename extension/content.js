@@ -1,7 +1,12 @@
 (function () {
   "use strict";
 
-  const STORAGE_KEY = "gmailArrowNavigationEnabled";
+  const ENABLED_STORAGE_KEY = "gmailArrowNavigationEnabled";
+  const KEYBINDINGS_STORAGE_KEY = "gmailArrowNavigationKeybindings";
+  const DEFAULT_KEYBINDINGS = {
+    newer: "ArrowLeft",
+    older: "ArrowRight",
+  };
   const extensionApi =
     typeof browser !== "undefined"
       ? browser
@@ -10,16 +15,17 @@
         : null;
 
   let isNavigationEnabled = true;
+  let keybindings = { ...DEFAULT_KEYBINDINGS };
 
   const NAVIGATION_SELECTORS = {
-    ArrowLeft: [
+    newer: [
       '[role="button"][aria-label="Newer"][data-tooltip]' +
         ', [role="button"][data-tooltip="Newer"]' +
         ', [role="button"][aria-label="Newer"]',
       'div[aria-label="Newer"]',
       'div[data-tooltip*="Newer"]',
     ],
-    ArrowRight: [
+    older: [
       '[role="button"][aria-label="Older"][data-tooltip]' +
         ', [role="button"][data-tooltip="Older"]' +
         ', [role="button"][aria-label="Older"]',
@@ -38,45 +44,64 @@
     return extensionApi && extensionApi.runtime ? extensionApi.runtime : null;
   }
 
-  function loadNavigationEnabledState() {
+  function getStoredValue(key, fallbackValue) {
     const storage = getStorageApi();
-    if (!storage) return Promise.resolve(true);
+    if (!storage) return Promise.resolve(fallbackValue);
 
     if (typeof storage.get === "function" && storage.get.length <= 1) {
-      return storage.get(STORAGE_KEY).then((result) => {
-        const storedValue = result[STORAGE_KEY];
-        return typeof storedValue === "boolean" ? storedValue : true;
+      return storage.get(key).then((result) => {
+        return Object.prototype.hasOwnProperty.call(result, key)
+          ? result[key]
+          : fallbackValue;
       });
     }
 
     return new Promise((resolve) => {
-      storage.get([STORAGE_KEY], (result) => {
+      storage.get([key], (result) => {
         const runtime = getRuntimeApi();
         if (runtime && runtime.lastError) {
-          resolve(true);
+          resolve(fallbackValue);
           return;
         }
 
-        const storedValue = result[STORAGE_KEY];
-        resolve(typeof storedValue === "boolean" ? storedValue : true);
+        resolve(
+          Object.prototype.hasOwnProperty.call(result, key)
+            ? result[key]
+            : fallbackValue,
+        );
       });
     });
   }
 
-  function saveNavigationEnabledState(enabled) {
-    const storage = getStorageApi();
-    if (!storage) return;
+  function normalizeKeybindings(value) {
+    if (!value || typeof value !== "object") return { ...DEFAULT_KEYBINDINGS };
 
-    if (typeof storage.set === "function" && storage.set.length <= 1) {
-      storage.set({ [STORAGE_KEY]: enabled }).catch(function () {
-        // Ignore runtime errors silently and keep session state in memory.
-      });
-      return;
-    }
+    return {
+      newer:
+        typeof value.newer === "string" && value.newer
+          ? value.newer
+          : DEFAULT_KEYBINDINGS.newer,
+      older:
+        typeof value.older === "string" && value.older
+          ? value.older
+          : DEFAULT_KEYBINDINGS.older,
+    };
+  }
 
-    storage.set({ [STORAGE_KEY]: enabled }, function () {
-      // Ignore runtime errors silently and keep session state in memory.
+  function normalizeEventKey(key) {
+    return key.length === 1 ? key.toLowerCase() : key;
+  }
+
+  function loadNavigationEnabledState() {
+    return getStoredValue(ENABLED_STORAGE_KEY, true).then((storedValue) => {
+      return typeof storedValue === "boolean" ? storedValue : true;
     });
+  }
+
+  function loadKeybindings() {
+    return getStoredValue(KEYBINDINGS_STORAGE_KEY, DEFAULT_KEYBINDINGS).then(
+      normalizeKeybindings,
+    );
   }
 
   function isVisible(element) {
@@ -100,8 +125,16 @@
     );
   }
 
-  function findEnabledNavButton(key) {
-    const selectors = NAVIGATION_SELECTORS[key];
+  function findActionForKey(key) {
+    const normalizedKey = normalizeEventKey(key);
+
+    if (normalizedKey === keybindings.newer) return "newer";
+    if (normalizedKey === keybindings.older) return "older";
+    return null;
+  }
+
+  function findEnabledNavButton(action) {
+    const selectors = NAVIGATION_SELECTORS[action];
     if (!selectors) return null;
 
     for (const selector of selectors) {
@@ -127,19 +160,23 @@
     if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey)
       return;
 
-    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+    const action = findActionForKey(event.key);
+    if (!action) return;
 
     if (isEditableTarget(event.target)) return;
 
-    const navButton = findEnabledNavButton(event.key);
+    const navButton = findEnabledNavButton(action);
     if (!navButton) return;
 
     navButton.click();
     event.preventDefault();
   });
 
-  loadNavigationEnabledState().then(function (enabled) {
-    isNavigationEnabled = enabled;
+  Promise.all([loadNavigationEnabledState(), loadKeybindings()]).then(function (
+    values,
+  ) {
+    isNavigationEnabled = values[0];
+    keybindings = values[1];
   });
 
   // Keep state in sync when popup toggles the feature.
@@ -147,14 +184,28 @@
     extensionApi.storage.onChanged.addListener(function (changes, areaName) {
       if (
         areaName !== "local" ||
-        !Object.prototype.hasOwnProperty.call(changes, STORAGE_KEY)
+        (!Object.prototype.hasOwnProperty.call(changes, ENABLED_STORAGE_KEY) &&
+          !Object.prototype.hasOwnProperty.call(
+            changes,
+            KEYBINDINGS_STORAGE_KEY,
+          ))
       ) {
         return;
       }
 
-      const nextValue = changes[STORAGE_KEY].newValue;
-      if (typeof nextValue === "boolean") {
-        isNavigationEnabled = nextValue;
+      if (Object.prototype.hasOwnProperty.call(changes, ENABLED_STORAGE_KEY)) {
+        const nextEnabledValue = changes[ENABLED_STORAGE_KEY].newValue;
+        if (typeof nextEnabledValue === "boolean") {
+          isNavigationEnabled = nextEnabledValue;
+        }
+      }
+
+      if (
+        Object.prototype.hasOwnProperty.call(changes, KEYBINDINGS_STORAGE_KEY)
+      ) {
+        keybindings = normalizeKeybindings(
+          changes[KEYBINDINGS_STORAGE_KEY].newValue,
+        );
       }
     });
   }
