@@ -5,7 +5,7 @@
   "description": "Use shortcuts to move between previous and next email in Gmail.",
   "browser_specific_settings": {
     "gecko": {
-      "id": "gmail-helper@gaurav.local",
+      "id": "gmail-shortcuts-plus@gaurav.local",
       "data_collection_permissions": {
         "required": ["none"]
       }
