@@ -13,19 +13,21 @@ A lightweight browser extension that enhances Gmail navigation with shortcuts.
 
 ### Firefox
 
-1. Open Firefox and go to `about:debugging`
-2. Click **This Firefox** in the left sidebar
-3. Click **Load Temporary Add-on...**
-4. Select `extension/manifest.json`
-5. Open Gmail and use the configured navigation keys
+1. Download `gmail-shortcuts-plus-extension.zip`
+2. Unzip the file to a local folder
+3. Open Firefox and go to `about:debugging`
+4. Click **This Firefox** in the left sidebar
+5. Click **Load Temporary Add-on...** and select `manifest.json` from the unzipped folder
+6. Open Gmail and use the configured navigation keys (default left right arrows)
 
 ### Chromium (Chrome/Edge/Brave)
 
-1. Download `gmail-helper-extension.zip`
+1. Download `gmail-shortcuts-plus-extension.zip`
 2. Unzip the file to a local folder
 3. Open Chrome and go to `chrome://extensions/`
 4. Enable "Developer mode" (top right)
-5. Click "Load unpacked" and select the unzipped folder
+5. Click "Load unpacked" and select `manifest.json` from the unzipped folder
+6. Open Gmail and use the configured navigation keys (default left right arrows)
 
 ## Contributing
 
