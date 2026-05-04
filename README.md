@@ -18,7 +18,8 @@ Click Here 👉
 
 ### Chromium (Chrome/Edge/Brave)
 
-1. Download `gmail-shortcuts-plus-extension.zip`
+1. Download `gmail-shortcuts-plus-extension.zip`  
+   Go to releases: [Release v1.0.0](https://github.com/gaurav7902/gmail-shortcuts-plus/releases/tag/v.1.0.0) or Click Here 👉 w[![Chromium](https://img.shields.io/badge/Zip-Download-4285F4?logo=google-chrome&logoColor=white)](https://github.com/gaurav7902/gmail-shortcuts-plus/releases/download/v.1.0.0/gmail-shortcuts-plus-extension.zip)
 2. Unzip the file to a local folder
 3. Open Chrome and go to `chrome://extensions/`
 4. Enable "Developer mode" (top right)
