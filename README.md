@@ -11,6 +11,11 @@ A lightweight browser extension that enhances Gmail navigation with shortcuts.
 
 ## Installation
 
+### Chrome / Edge / Brave / Chromium-based Browsers
+
+Click Here 👉
+[![Chrome](https://img.shields.io/badge/Chrome-Install-4285F4?logo=google-chrome&logoColor=white)](https://chromewebstore.google.com/detail/gmail-shortcuts-plus/pjnioipkhnbegfikienagebcjemcldil)
+
 ### Firefox
 
 Click Here 👉
@@ -20,11 +25,6 @@ Click Here 👉
 
 Click Here 👉
 [![Edge](https://img.shields.io/badge/Edge-Install-0078D7?logo=microsoft-edge&logoColor=white)](https://microsoftedge.microsoft.com/addons/detail/nkhjhlamnlfjihcgnipbjccdchpoiggn)
-
-### Chrome / Edge / Brave / Chromium-based Browsers
-
-Click Here 👉
-[![Chrome](https://img.shields.io/badge/Chrome-Install-4285F4?logo=google-chrome&logoColor=white)](https://chromewebstore.google.com/detail/gmail-shortcuts-plus/pjnioipkhnbegfikienagebcjemcldil)
 
 ## Contributing
 
@@ -39,11 +39,16 @@ Contributions are welcome! Feel free to fork, improve, and submit pull requests.
 
 ## Authors
 
-<!-- <a href="https://github.com/gaurav7902">
-  <img src="https://github.com/gaurav7902.png" width="60" height="60" style="border-radius: 50%;" alt="gaurav7902">
-</a> -->
-
-[@gaurav7902](https://github.com/gaurav7902)
+<div align="center">
+   <table><tr>
+      <td><img src="https://github.com/gaurav7902.png" width="96" style="border-radius:50%; border:3px solid #000;" alt="gaurav7902"></td>
+      <td style="padding-left:12px">
+         <h3><a href="https://github.com/gaurav7902">gaurav7902</a></h3>
+         <p>Maintainer • Open to contributions</p>
+         <p><a href="https://github.com/gaurav7902"><img src="https://img.shields.io/badge/Follow-@gaurav7902-0366d6?style=flat-square&logo=github" alt="Follow" /></a></p>
+      </td>
+   </tr></table>
+</div>
 
 ## License
 
