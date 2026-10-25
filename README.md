@@ -21,15 +21,10 @@ Click Here 👉
 Click Here 👉
 [![Edge](https://img.shields.io/badge/Edge-Install-0078D7?logo=microsoft-edge&logoColor=white)](https://microsoftedge.microsoft.com/addons/detail/nkhjhlamnlfjihcgnipbjccdchpoiggn)
 
-### Chromium (Chrome/Edge/Brave)
+### Chrome / Edge / Brave / Chromium-based Browsers
 
-1. Download `gmail-shortcuts-plus-extension.zip`  
-   Go to releases: [Release v1.0.0](https://github.com/gaurav7902/gmail-shortcuts-plus/releases/tag/v.1.0.0) or Click Here 👉 [![Chromium](https://img.shields.io/badge/Zip-Download-4285F4?logo=google-chrome&logoColor=white)](https://github.com/gaurav7902/gmail-shortcuts-plus/releases/download/v.1.0.0/gmail-shortcuts-plus-extension.zip)
-2. Unzip the file to a local folder
-3. Open Chrome and go to `chrome://extensions/`
-4. Enable "Developer mode" (top right)
-5. Click "Load unpacked" and select `manifest.json` from the unzipped folder
-6. Open Gmail and use the configured navigation keys (default left right arrows)
+Click Here 👉
+[![Chrome](https://img.shields.io/badge/Chrome-Install-4285F4?logo=google-chrome&logoColor=white)](https://chromewebstore.google.com/detail/gmail-shortcuts-plus/pjnioipkhnbegfikienagebcjemcldil)
 
 ## Contributing
 

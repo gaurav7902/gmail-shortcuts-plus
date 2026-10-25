@@ -1,0 +1,41 @@
+name: Build and Release Extension
+
+on:
+    push:
+        branches:
+            - master
+            - main
+        paths:
+            - "extension/**"
+            - "generate-extension-zip.sh"
+    workflow_dispatch:
+
+permissions:
+    contents: write
+
+jobs:
+    release:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Read extension version
+              id: version
+              run: echo "version=$(jq -r '.version' extension/manifest.json)" >> "$GITHUB_OUTPUT"
+
+            - name: Build extension zip
+              run: bash generate-extension-zip.sh
+
+            - name: Read commit short SHA
+              id: sha
+              run: echo "short_sha=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+            - name: Create GitHub release
+              uses: softprops/action-gh-release@v2
+              with:
+                  tag_name: v${{ steps.version.outputs.version }}-${{ steps.sha.outputs.short_sha }}
+                  name: v${{ steps.version.outputs.version }}-${{ steps.sha.outputs.short_sha }}
+                  generate_release_notes: true
+                  files: gmail-shortcuts-plus-extension.zip
